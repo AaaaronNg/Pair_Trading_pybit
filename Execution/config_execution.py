@@ -2,6 +2,8 @@
 from pybit import usdt_perpetual
 # config variables
 
+
+# ticker
 mode = "test"
 ticker_1 = "BALUSDT"
 ticker_2 = "JASMYUSDT"
@@ -10,10 +12,12 @@ signal_negative_ticker = ticker_1
 
 
 # it depends on your sym_1 and sym_2
-rounding_ticker_1 = 4
+rounding_ticker_1 = 3
 rounding_ticker_2 = 4
-quantity_rounding_ticker_1 = 0
+quantity_rounding_ticker_1 = 2
 quantity_rounding_ticker_2 = 1
+
+
 
 limit_order_basis = True
 
@@ -21,7 +25,7 @@ tradable_capital_usdt = 2000 # total tradable capital to be split between both p
 stop_loss_fail_safe = 0.15 # stop loss at market order in cas of drastic event
 signal_trigger_thresh = 1.1 # z-score threshold 
 
-timefram = 60
+timeframe = 60
 kline_limit = 200
 z_score_window = 21
 
@@ -49,3 +53,8 @@ session = usdt_perpetual.HTTP(
     endpoint=api_url
     )
 # session_private = HTTP(api_url, api_key)
+session_private = usdt_perpetual.HTTP(
+    endpoint=api_url,
+    api_key=api_key,
+    api_secret=api_secret
+)

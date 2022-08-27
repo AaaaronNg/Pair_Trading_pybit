@@ -10,15 +10,11 @@ import math
 # calculate z-score
 def calculate_zscore(spread):
 
-    #
-
     # https://robotwealth.com/rolling-and-expanding-windows-for-dummies/
     # rolling window
     df = pd.DataFrame(spread)
     mean = df.rolling(center=False, window = z_score_window).mean()
-    print(mean)
     std = df.rolling(center = False, window = z_score_window).std()
-    print(std)
     x = df.rolling(center=False, window=1).mean()
     df["zscore"] = (x-mean)/std
     return df["zscore"].astype(float).values 
