@@ -21,14 +21,14 @@ def check_order(ticker, order_id, remaining_capital, direction="Long"):
     position_price, position_quantity = get_open_position(ticker, direction)
 
     # Get active positions
-    active_order_price, active_order_quantity = get_active_position(ticker)
+    # active_order_price, active_order_quantity = get_active_position(ticker)
 
     # Determin action - position filled - buy more
     if order_status == "Filled":
         return "Position Filled"
 
     # Determine action - trade complete - stop placing orders
-    if position_quantity >= remaining_capital:
+    if position_quantity >= remaining_capital and position_quantity > 0:
         return "Trade Complete"
 
     # Determine action - order active - do nothing

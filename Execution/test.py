@@ -1,10 +1,15 @@
 from config_execution import signal_negative_ticker
 from config_execution import signal_positive_ticker
 from config_execution import session
+from config_execution import session_private
+from func_execution_calls import place_order
 from func_position_calls import open_position_confirmation
 from func_position_calls import active_position_confirmation
-from func_execution_calls import set_leverage
-from func_price_calls import get_ticker_trade_liquidity
+from func_execution_calls import initialise_order_execution
+from config_execution import signal_positive_ticker
+from config_execution import signal_negative_ticker
+from func_calculation import get_trade_details
+import time
 # from time import sleep
 # from pybit import usdt_perpetual
 # ws_linear = usdt_perpetual.WebSocket(
@@ -34,7 +39,12 @@ from func_price_calls import get_ticker_trade_liquidity
 #     from_time=1581231260
 # ))
 
-print(session.public_trading_records(
-        symbol="BTCUSDT",
-        limit = 500
-    ))
+
+while True:
+    orderbook = session.orderbook(symbol="BTCUSDT")
+    if orderbook:
+        mid_price, stop_loss, quantity = get_trade_details(orderbook["result"], "Long", 1000)
+        print(f'mid_price == {mid_price}, quantity == {quantity}')
+
+    time.sleep(1)
+

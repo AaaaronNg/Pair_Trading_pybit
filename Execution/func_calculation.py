@@ -19,6 +19,7 @@ def extract_close_prices(prices):
     return close_prices
 
 # get trade details and latest prices
+
 def get_trade_details(orderbook, direction="Long", capital=0):
 
     # set calculation and output variables
@@ -29,6 +30,7 @@ def get_trade_details(orderbook, direction="Long", capital=0):
     stop_loss = 0
     bid_items_list = []
     ask_item_list = []
+
 
     # Get
     if orderbook:
@@ -53,7 +55,8 @@ def get_trade_details(orderbook, direction="Long", capital=0):
 
             # Get nearest ask, nearest bid and orderbook spread
             nearest_ask = ask_item_list[0]
-            nearest_bid = ask_item_list[0]
+            nearest_bid = bid_items_list[0]
+
 
             
 

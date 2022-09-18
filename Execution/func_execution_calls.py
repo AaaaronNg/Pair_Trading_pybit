@@ -1,10 +1,9 @@
 from config_execution import session_private
 from config_execution import limit_order_basis
 from func_calculation import get_trade_details
-from pybit import usdt_perpetual
-from config_execution import ticker_1
+from config_execution import session
 import math
-from time import sleep
+
 
 
 
@@ -49,7 +48,7 @@ def place_order(ticker, price, quantity, direction, stop_loss):
             reduce_only=False,
             close_on_trigger=False,
             stop_loss = stop_loss
-        ) 
+        )
     else:
         order = session_private.place_active_order(
             symbol=ticker,
@@ -68,19 +67,17 @@ def place_order(ticker, price, quantity, direction, stop_loss):
 
 ########################################################################
 
-counts = 0
 
-def initialise_order_execution(orderbook, direction, capitial):
-    mid_price, stop_loss, quantity = get_trade_details(orderbook, direction, capitial)
-   
-    global counts
-    if quantity > 0 and counts == 0:
-        order = place_order(ticker_1, mid_price, quantity, direction, stop_loss)
-        # counts += 1
-        if "result" in order.keys():
-            if "order_id" in order["result"]:
-                return order["result"]["order_id"]
-    
+def initialise_order_execution(ticker, direction, capitial):
+    orderbook = session.orderbook(symbol=ticker)
+    if orderbook:
+        mid_price, stop_loss, quantity = get_trade_details(orderbook["result"], direction, capitial)
+        print(f'mid_price == {mid_price}, quantity == {quantity}, direction == {direction}, stop_loss={stop_loss}')
+        if quantity > 0:
+            order = place_order(ticker, mid_price, quantity, direction, stop_loss)
+            if "result" in order.keys():
+                if "order_id" in order["result"]:
+                    return order["result"]["order_id"]
     return 0
 
 

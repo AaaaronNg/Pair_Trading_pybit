@@ -12,6 +12,7 @@ from func_trade_management import manage_new_trades
 from func_execution_calls import set_leverage
 from func_close_position import close_all_positions
 from func_save_status import save_status
+from func_get_zscore import get_latest_zscore
 import time
 
 
@@ -27,6 +28,7 @@ if __name__ == "__main__":
     order_short = {}
     signal_sign_positive = False
     kill_switch = 0
+    signal_side = ""
 
     # Save status
     save_status(status_dict)
@@ -49,6 +51,7 @@ if __name__ == "__main__":
         is_n_ticker_active = active_position_confirmation(signal_negative_ticker)
         checks_all = [is_p_ticker_open, is_n_ticker_open, is_p_ticker_active, is_n_ticker_active]
         is_manage_new_trades = not any(checks_all)
+        print(checks_all)
         
 
         # Save status
@@ -58,14 +61,28 @@ if __name__ == "__main__":
 
 
         # Check for signal and place new trades
+        print(f'kill switch == {kill_switch} and is_manage_new_trades == {is_manage_new_trades}')
         if is_manage_new_trades and kill_switch == 0:
             status_dict["message"] = "Managing new trades ..."
             save_status(status_dict)
-            kill_switch = manage_new_trades(kill_switch)
+            kill_switch, signal_side = manage_new_trades(kill_switch)
             print("test")
+
+        # Managing open kill switch if positions change or should reach 2
+        if kill_switch == 1:
+            
+
+            zscore, signal_sign_positive = get_latest_zscore()
+            if signal_side == "positive" and zscore<0:
+                kill_switch = 2
+            if signal_side == "positive" and zscore >=0:
+                kill_switch = 2
+            if is_manage_new_trades and kill_switch != 2:
+                kill_switch = 0
 
         # Close all active order and positions
         if kill_switch == 2:
+            print("Closing all positions ...")
             status_dict["message"] = "Closing existing trades..."
             save_status(status_dict)
             kill_switch = close_all_positions(kill_switch)

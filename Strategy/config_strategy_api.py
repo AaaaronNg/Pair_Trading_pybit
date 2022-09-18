@@ -49,16 +49,16 @@ session = usdt_perpetual.HTTP(
 
 # ws.send('{"op":"subscribe","args":["klineV2.1.BTCUSD"]}')
 
-ws_inverseP = usdt_perpetual.WebSocket(
-    test=True,
-    ping_interval=30,  # the default is 30
-    ping_timeout=10,  # the default is 10
-    domain="bybit"  # the default is "bybit"
-)
+# ws_inverseP = usdt_perpetual.WebSocket(
+#     test=True,
+#     ping_interval=30,  # the default is 30
+#     ping_timeout=10,  # the default is 10
+#     domain="bybit"  # the default is "bybit"
+# )
 
 
-def handle_message(msg):
-    print(msg)
+# def handle_message(msg):
+#     print(msg)
 
 
 # To subscribe to multiple symbols,

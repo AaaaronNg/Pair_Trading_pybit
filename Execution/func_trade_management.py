@@ -74,9 +74,96 @@ def manage_new_trades(kill_switch):
         remaining_capital_long = capital_long
         remaining_capital_short = capital_short
 
-        print(remaining_capital_long, remaining_capital_short, initial_capital_usdt)
+        # Trade until filled or signal is false
+        order_status_long = ""
+        order_status_short = ""
+        counts_long = 0
+        counts_short = 0
+        while kill_switch == 0:
+            # Place order - long
+            if counts_long == 0:
+                order_long_id = initialise_order_execution(long_ticker, "Long", initial_capital_usdt)
+                counts_long = 1 if order_long_id else 0
+                remaining_capital_long = remaining_capital_long - initial_capital_usdt
+                print("order_long")
+                print(order_long_id)
+
+            
+            # Place order - short
+            if counts_short == 0:
+                order_short_id = initialise_order_execution(short_ticker, "Short", initial_capital_usdt)
+                counts_short = 1 if order_short_id else 0
+                remaining_capital_short = remaining_capital_short - initial_capital_usdt
+                print("order_short")
+                print(order_short_id)
+
+            # Update the signal sign
+            if zscore > 0:
+                signal_side = "positive"
+            else:
+                signal_side = "negative"
+
+            # Handle kill switch for Market orders
+            if not limit_order_basis and counts_long and counts_short:
+                kill_switch = 1
+
+            # Allow for time to register the limit order
+            time.sleep(3)
+
+            # check limit orders and ensure zscore is still within range
+            zscore_new, signal_sign_p_new = get_latest_zscore()
+
+            if kill_switch == 0:
+                if abs(zscore_new)> signal_trigger_thresh * 0.9 and signal_sign_p_new == signal_sign_positive:
+
+                    # check long order status
+                    if counts_long == 1:
+                        order_status_long = check_order(long_ticker, order_long_id, remaining_capital_long, "Long")
+
+                    # check short order status
+                    if counts_short == 1:
+                        order_status_short = check_order(short_ticker, order_short_id, remaining_capital_short, "Short")
+
+                    print(order_status_long, order_status_short, zscore_new)
+                    time.sleep(2)
 
 
+                    
 
-    return 0
+
+                    # if order still active, do nothing
+                    if order_status_long == "Order Active" or order_status_short == "Order Active":
+                        continue
+
+                    # if order still partial fill, do nothing
+                    if order_status_long == "Partial Fill" or order_status_short == "Partial Fill":
+                        continue
+
+                    # if orders trade complete, do nothing - stop opening trades
+                    if order_status_long == "Trade Complete" and order_status_short == "Trade Complete":
+                        kill_switch = 1
+
+                    # if position filled - place another trade
+                    if order_status_long == "Position Filled" and order_status_short == "Position Filled":
+                        counts_long = 0
+                        counts_short = 0
+
+                    # if order cancelled for long - try again
+                    if order_status_long == "Try Again":
+                        counts_long = 0
+
+                    # if order cancelled for short - try again
+                    if order_status_short == "Try Again":
+                        counts_short = 0
+
+                else:
+                    # Cancel all active orders
+                    session_private.cancel_all_active_orders(symbol=signal_positive_ticker)
+                    session_private.cancel_all_active_orders(symbol=signal_negative_ticker)
+                    kill_switch = 1
+                    print("cancel all active orders")
+                    time.sleep(2)
+
+
+    return kill_switch, signal_side
 

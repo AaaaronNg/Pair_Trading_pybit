@@ -5,17 +5,17 @@ from pybit import usdt_perpetual
 
 # ticker
 mode = "test"
-ticker_1 = "BALUSDT"
-ticker_2 = "JASMYUSDT"
+ticker_1 = "BTCUSDT" # BALUSDT
+ticker_2 = "ETHUSDT" # JASMYUSDT
 signal_positive_ticker = ticker_2
 signal_negative_ticker = ticker_1
 
 
 # it depends on your sym_1 and sym_2
-rounding_ticker_1 = 3
-rounding_ticker_2 = 4
-quantity_rounding_ticker_1 = 2
-quantity_rounding_ticker_2 = 1
+rounding_ticker_1 = 2
+rounding_ticker_2 = 2
+quantity_rounding_ticker_1 = 3
+quantity_rounding_ticker_2 = 2
 
 
 
@@ -23,7 +23,7 @@ limit_order_basis = True
 
 tradable_capital_usdt = 2000 # total tradable capital to be split between both pairs
 stop_loss_fail_safe = 0.15 # stop loss at market order in cas of drastic event
-signal_trigger_thresh = 1.1 # z-score threshold 
+signal_trigger_thresh = 0.2 # z-score threshold 
 
 timeframe = 60
 kline_limit = 200

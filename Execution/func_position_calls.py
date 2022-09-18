@@ -9,7 +9,6 @@ def open_position_confirmation(ticker):
         if position["ret_msg"] == "OK":
             for item in position["result"]:
                 if item["size"] > 0:
-                    print(item["size"])
                     return True
     except:
         return True
@@ -54,8 +53,6 @@ def get_active_position(ticker):
             symbol=ticker,
             order_status="Created, New, PartiallyFilled, Active"
             )
-
-    
 
     if "ret_msg" in active_order.keys():
         if active_order["ret_msg"] == "OK":
